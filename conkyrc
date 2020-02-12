@@ -1,0 +1,103 @@
+# Conky/Lua Monitor by Don B. Cilly 
+# Modification by Manuel Rosello
+# Base settings
+update_interval 1
+total_run_times 0
+net_avg_samples 1
+cpu_avg_samples 1
+
+imlib_cache_size 0
+double_buffer yes
+no_buffers yes
+
+format_human_readable
+
+# Text settings 
+
+use_xft yes
+xftfont ubuntu:style=Bold:size=8
+override_utf8_locale yes
+text_buffer_size 2048
+
+# Window settings
+
+own_window_class Conky
+own_window yes
+own_window_argb_visual yes
+own_window_argb_value 200
+own_window_transparent yes
+own_window_hints undecorated,below,sticky,skip_taskbar
+
+alignment top_right
+gap_x 30
+gap_y 16
+minimum_size 600 500
+maximum_width 600
+default_bar_size 400 8
+
+# Graphics settings 
+draw_shades no
+default_color cccccc
+
+color0 black
+color1 d88353
+color2 white
+color4 472b68
+color5 d88353
+
+lua_load ./graph.lua
+lua_draw_hook_pre main_graph
+
+own_window_colour 000000
+TEXT
+
+${alignr}${font ubuntu:style=Bold:size=36}${color}${time %H:%M}${color}
+${voffset -94}${font ubuntu:style=Bold:size=8}${color5}${execi 6000 echo ${USER}@`hostname`}${color}
+################################################
+################################################
+# SYSTEM
+${font ubuntu:bold:size=8}${voffset 0}${execi 6000 lsb_release -d | awk '/Description:/ {print $2,$3,$4}'}
+${execi 6000 inxi -c 0 -Sx | awk '/System:/ {print substr($5,1,9),$6}'}
+${uptime}${color}
+${battery_percent BAT0}% ${battery_bar 8,72 BAT0}${color}
+${goto 140}${voffset -62}${color5}${cpugraph 12,80 color5 color2 -t}
+${goto 140}${voffset -13}${color}${downspeedgraph 
+ 12,80 color5 color2 -t}
+${voffset -13}${goto 228}${color}CPU ${cpu}%${color}
+################################################
+################################################
+# NETWORK
+${voffset -15}${goto 300}${color}${wireless_essid wlp2s0}
+${goto 300}${color}${addr wlp2s0}${color} | ${execi 10000 curl -s ipinfo.io/ip}${color}
+# If your IP address doesn't show, try installing curl :·)
+${goto 300}${voffset 2}${color5}${upspeedgraph wlp2s0 12,80 color5 color2 -t}
+${goto 300}${voffset 3}${color4}${downspeedgraph wlp2s0 12,80 color4 color4 -t}
+${goto 300}${voffset -29}${color}${downspeedgraph 12,80 color4 color4 -t}
+${voffset 31}${goto 300}${voffset -28}${color}${downspeedgraph 12,80 color4 color4 -t}
+${voffset -29}${goto 388}${color}UP ${upspeed wlp2s0}
+${voffset 3}${goto 388}${color}DN ${downspeed wlp2s0}${color}
+
+################################################
+################################################
+# RAM/SWAP                                                                         
+
+${goto 228}${voffset -65}RAM ${execpi 40 free -m | awk '/Mem:/ { printf int(( $2-$7 ) /$2*100) }'}%
+${voffset -15}${goto 140}${voffset 2}${color5}${memgraph 12,80 color5 color2 -t}
+${goto 140}${voffset -13}${color}${downspeedgraph 
+ 12,80 color5 color2 -t}
+
+
+################################################
+################################################
+# HD used                      
+${voffset -23}${goto 140}${color5}${fs_bar 12,80 /}${goto 228}${color}HD ${color}${fs_used_perc /home}%${color lightgrey}
+${voffset -13}${goto 140}${color}${color}${downspeedgraph 
+ 12,80 color5 color2 -t}                      
+
+################################################
+################################################
+#HD read/write
+${voffset -25}${goto 140}${voffset 2}${color5}${diskiograph 12,80 color4 color5 -t}
+${voffset -13}${goto 140}${color}${color}${downspeedgraph 12,80 color5 color2 -t}   
+${goto 228}${voffset -13}${color}R/W ${diskio}
+${font ubuntu:style=Bold:size=8}

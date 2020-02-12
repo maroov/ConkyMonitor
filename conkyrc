@@ -97,6 +97,7 @@ ${voffset -13}${goto 140}${color}${color}${downspeedgraph
 ################################################
 ################################################
 #HD read/write
+
 ${voffset -25}${goto 140}${voffset 2}${color5}${diskiograph 12,80 color4 color5 -t}
 ${voffset -13}${goto 140}${color}${color}${downspeedgraph 12,80 color5 color2 -t}   
 ${goto 228}${voffset -13}${color}R/W ${diskio}
